@@ -156,3 +156,14 @@ p.reset-margin {
 
 /* Larger than tablet */
 @media (min-width: 1200px) {}
+
+
+.sendmsg {
+  color: white;
+}
+
+textarea {
+        width: 500px;
+        height: 200px;
+        color: white;
+}
