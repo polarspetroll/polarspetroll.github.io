@@ -30,5 +30,8 @@ button.addEventListener('click', () => {
 		nameinput.value = ""
 		textinput.value = ""
 	};
+	request.onerror = () => {
+		responsetag.innerText = "Error. Please Check Your Internet Connection."
+	}
 	request.send();
 });
