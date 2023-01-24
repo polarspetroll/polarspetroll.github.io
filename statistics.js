@@ -8,19 +8,10 @@ var info = `{
 		"admin": "${localStorage.getItem("admin")}"}`
 var request = new XMLHttpRequest();
 request.withCredentials = true;
-request.open("GET", `${URL}/api/index`, true);
+request.open("POST", `${URL}/api/index`, true);
 request.send(info);
 
-
-/*document.getElementById("emailbtn").addEventListener("onlick", Click("email"))
-document.getElementById("githubbtn").addEventListener("onlick", Click("github"))
-document.getElementById("twitterbtn").addEventListener("onlick", Click("twitter"))
-
-function Click(param) {
-	let request = new XMLHttpRequest();
-	request.withCredentials = true;
-	request.open("GET", `${URL}/api/clicks?social=${param}`, true);
-	request.send();
-
-
-} */
+request.withCredentials = true;
+document.getElementById("emailbtn").addEventListener("onlick", ()=>{request.open("GET", `${URL}/api/clicks?social=email`, true); request.send()})
+document.getElementById("githubbtn").addEventListener("onlick", ()=>{request.open("GET", `${URL}/api/clicks?social=github`, true); request.send()})
+document.getElementById("twitterbtn").addEventListener("onlick", ()=>{request.open("GET", `${URL}/api/clicks?social=twitter`, true); request.send()})
