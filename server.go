@@ -1,14 +1,15 @@
 package main
 
 import (
-	"net/http"
-	"os"
-	"regexp"
-	"time"
-	"strings"
-	"net/url"
 	"encoding/json"
 	"fmt"
+	"net"
+	"net/http"
+	"net/url"
+	"os"
+	"regexp"
+	"strings"
+	"time"
 )
 
 var tgapi = fmt.Sprintf("https://api.telegram.org/bot%v/sendMessage?chatid=%v&text=", os.Getenv("TOKEN"), os.Getenv("CHATID"))
@@ -17,7 +18,7 @@ func main() {
 	server := &http.Server{
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
-		Addr: ":"+os.Getenv("PORT"),
+		Addr:         ":" + os.Getenv("PORT"),
 	}
 	http.HandleFunc("/api", APIHandler)
 	server.ListenAndServe()
@@ -57,15 +58,76 @@ func CheckCreds(email, name, message string) (emailvalid, namevalid, messagevali
 		namevalid = false
 	}
 
-	if strings.ReplaceAll(message, " ", "") == ""  || len(message) > 3000 {
+	if strings.ReplaceAll(message, " ", "") == "" || len(message) > 3000 {
 		messagevalid = false
 	}
 	return emailvalid, namevalid, messagevalid
 }
 
-
 func sendMessage(name, email, message string) {
 	text := fmt.Sprintf("name: %s\nemail: %s\nmessage:\n%s", name, email, message)
 	text = url.QueryEscape(text)
 	http.Get(fmt.Sprintf(tgapi + text))
+}
+
+func Statistics(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	data := r.URL.Query().Get("data")
+	var info Info
+	err := json.Unmarshal([]byte(data), info)
+	if err != nil {
+		return
+	}
+
+	if info.Admin == os.Getenv("ADMIN") {
+		return
+	}
+
+	msg := fmt.Sprintf("Referrer: %s\nLanguage: %s\nScreen: %s\n Timezone: %s\nUser Agent: %s\nIP: %s",
+		info.Ref,
+		info.Lang,
+		info.Screen,
+		info.Time,
+		r.UserAgent(),
+		getIP(r),
+	)
+
+	msg = url.QueryEscape(msg)
+
+	http.Get(tgapi + msg)
+
+	w.Write([]byte("OK"))
+}
+
+type Info struct {
+	Ref    string `json: "referrer"`
+	Lang   string `json: "lang"`
+	Screen string `json: "screen"`
+	Time   string `json: "time"`
+	Admin  string `json: "admin"`
+}
+
+func getIP(r *http.Request) string {
+	ip := r.Header.Get("X-REAL-IP")
+	netIP := net.ParseIP(ip)
+	if netIP != nil {
+		return ip
+	}
+	ips := r.Header.Get("X-FORWARDED-FOR")
+	splitIps := strings.Split(ips, ",")
+	for _, ip := range splitIps {
+		netIP := net.ParseIP(ip)
+		if netIP != nil {
+			return ip
+		}
+	}
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return ""
+	}
+	netIP = net.ParseIP(ip)
+	if netIP != nil {
+		return ip
+	}
+	return ""
 }

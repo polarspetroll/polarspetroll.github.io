@@ -6,7 +6,7 @@ var textinput = document.getElementById("textinput");
 button.addEventListener('click', () => {
 	var request = new XMLHttpRequest();
 	var responsetag = document.getElementById("response");
-	request.open('GET', `https://contact.polarspetroll.repl.co/api?name=${nameinput.value}&email=${emailinput.value}&message=${textinput.value}`);
+	request.open('GET', `https://WebsiteStatistics.petrolldc.repl.co/Contact?name=${nameinput.value}&email=${emailinput.value}&message=${textinput.value}`);
 	request.onload = () => {
 		if (request.status != 200) {
 			responsetag.innerHTML = "Error, Please try again later"
@@ -35,3 +35,5 @@ button.addEventListener('click', () => {
 	}
 	request.send();
 });
+
+
