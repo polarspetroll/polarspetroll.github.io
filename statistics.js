@@ -12,7 +12,7 @@ request.open("GET", `${URL}/api/index`, true);
 request.send(info);
 
 
-document.getElementById("emailbtn").addEventListener("onlick", Click("email"))
+/*document.getElementById("emailbtn").addEventListener("onlick", Click("email"))
 document.getElementById("githubbtn").addEventListener("onlick", Click("github"))
 document.getElementById("twitterbtn").addEventListener("onlick", Click("twitter"))
 
@@ -23,4 +23,4 @@ function Click(param) {
 	request.send();
 
 
-} 
+} */
